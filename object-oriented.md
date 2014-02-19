@@ -144,7 +144,7 @@
       who: function () {
 
         function age(that) {
-          var birthday = new Date(that.birthday.replace(/-/g,'/'));
+          var birthday = new Date(that.birthday);
           return Math.floor((new Date() - birthday) / (1000 * 60 * 60 * 24 * 365));
         }
 
@@ -169,7 +169,7 @@
         var that = this;
 
         function age() {
-          var birthday = new Date(that.birthday.replace(/-/g,'/'));
+          var birthday = new Date(that.birthday);
           return Math.floor((new Date() - birthday) / (1000 * 60 * 60 * 24 * 365));
         }
 
