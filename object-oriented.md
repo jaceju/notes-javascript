@@ -6,7 +6,7 @@
 
     var p1 = {
         name: '小明',
-        birthday: '1980-2-28',
+        birthday: '1980/2/28',
         'phone-number': '0912345678' // 注意最後沒有逗號
     };
 
@@ -54,7 +54,7 @@
 
     function who(p) {
 
-        var birthday = new Date(p.birthday.replace(/-/g,'/'));
+        var birthday = new Date(p.birthday);
         // 1000 * 60 * 60 * 24 * 365 = 31536000000
         var age = Math.floor((new Date() - birthday) / 31536000000);
 
@@ -72,10 +72,10 @@
 
     var p1 = {
         name: '小明',
-        birthday: '1980-2-28',
+        birthday: '1980/2/28',
         who: function () {
 
-            var birthday = new Date(p1.birthday.replace(/-/g,'/'));
+            var birthday = new Date(p1.birthday);
             var age = Math.floor((new Date() - birthday) / 31536000000);
 
             return 'I\'m ' + p1.name + ', my age is ' + age;
@@ -93,10 +93,10 @@
 
     var p1 = {
         name: '小明',
-        birthday: '1980-2-28',
+        birthday: '1980/2/28',
         who: function () {
 
-            var birthday = new Date(this.birthday.replace(/-/g,'/'));
+            var birthday = new Date(this.birthday);
             var age = Math.floor((new Date() - birthday) / 31536000000);
 
             return 'I\'m ' + this.name + ', my age is ' + age;
@@ -112,13 +112,13 @@
 
     var p1 = {
         name: '小明',
-        birthday: '1980-2-28',
+        birthday: '1980/2/28',
         who: function () {
 
             // 用生日計算年齡
             function age() {
                 console.log(this);
-                var birthday = new Date(this.birthday.replace(/-/g,'/'));
+                var birthday = new Date(this.birthday);
                 return Math.floor((new Date() - birthday) / 31536000000);
             }
 
@@ -128,9 +128,9 @@
 
 * 在方法裡可以再包含函式
 * 方法裡的函式用到的 `this` 就不再是指到原來的物件
-* 在方法裡的函式中， `this` 變成了 Global 的 `Window` 物件
+* 在方法裡的函式中， `this` 變成了 Global 的 `window` 物件
 
-### 改法一
+### 改法一：用參數傳遞
 
 * `age` 改為帶一個參數 `that` 的函式
 * `age` 中的 `this` 改成 `that`
@@ -140,7 +140,7 @@
 
     var p1 = {
       name: '小明',
-      birthday: '1990-2-28',
+      birthday: '1980/2/28',
       who: function () {
 
         function age(that) {
@@ -154,7 +154,7 @@
 
     console.log(p1.who());
 
-### 改法二
+### 改法二：利用變數的 scope
 
 * 利用 `that` 變數暫時記住 `this`
 * `age` 中的 `this` 改成 `that`
@@ -163,7 +163,7 @@
 
     var p1 = {
       name: '小明',
-      birthday: '1990-2-28',
+      birthday: '1980/2/28',
       who: function () {
         
         var that = this;
@@ -179,7 +179,7 @@
 
     console.log(p1.who());
 
-## 改法 3
+## 物件中方法呼叫方法
 
 * 把 `age()` 函式變成方法
 * 在 `who` 方法中改用 `this.age()` 來呼叫
@@ -188,12 +188,12 @@
 
     var p1 = {
       name: '小明',
-      birthday: '1990-2-28',
+      birthday: '1980/2/28',
       who: function () {
         return 'I\'m ' + this.name + ', my age is ' + this.age();
       },
       age: function () {
-        var birthday = new Date(this.birthday.replace(/-/g,'/'));
+        var birthday = new Date(this.birthday);
         return Math.floor((new Date() - birthday) / (1000 * 60 * 60 * 24 * 365));
       }
     };
@@ -228,7 +228,7 @@
 * 要用 `this` 來指定物件成員
 * 透過 `new` 呼叫建構函式時， `this` 指向建立出來的物件
 * 沒有用 `new` 來呼叫建構式，這時的建構式就只是普通的函式，
-  `this` 指向 Global 的 `Windows` 物件。
+  `this` 指向 Global 的 `windows` 物件。
 
 ## 再看看 `this`
 
@@ -244,14 +244,14 @@
 
 * 函式中的 `this` 可以看成保留的空位
 * `this` 是程式執行時動態決定它要指向誰
-* 預設函式中的 `this` 是指向 `Window`
+* 預設函式中的 `this` 是指向 `window`
 
 ## 用 `apply` 來決定誰是 `this`
 
 範例：
 
-    var p1 = new Programer('小明', '1990-06-21', '0912345678');
-    var p2 = new Programer('小華', '1991-11-03', '0922111555');
+    var p1 = new Programer('小明', '1990/06/21', '0912345678');
+    var p2 = new Programer('小華', '1991/11/03', '0922111555');
 
     function getPhoneNumber() {
         return this['phone-number'];
@@ -267,18 +267,18 @@
 
 範例：
 
-    function profile(caption1, caption2, caption3) {
+    function profile(label1, label2, label3) {
       var s = '';
-      s += caption1 + ': ' + this.name + '\n';
-      s += caption2 + ': ' + this.birthday + '\n';
-      s += caption3 + ': ' + this['phone-number'] + '\n';
+      s += label1 + ': ' + this.name + '\n';
+      s += label2 + ': ' + this.birthday + '\n';
+      s += label3 + ': ' + this['phone-number'] + '\n';
       return s;
     }
 
     console.log(profile.apply(p1, ['Name', 'Birthday', 'Phone Number']));
-    // 'Name' 對應 caption1
-    // 'Birthday' 對應 caption2
-    // 'Phone Number' 對應 caption3
+    // 'Name' 對應 label1
+    // 'Birthday' 對應 label2
+    // 'Phone Number' 對應 label3
 
 * `apply` 第二個參數是接一個陣列，陣列值會依序傳給函式的參數
 
@@ -296,7 +296,7 @@
     // 錯誤， profile 還沒有宣告
 
     // 讓 profile 函式跟著 Programer 這個類型
-    Programer.prototype.profile = function (caption1, caption2, caption3) {
+    Programer.prototype.profile = function (label1, label2, label3) {
       /* ... */
     };
 
@@ -330,7 +330,7 @@
 
     Programer.prototype = new Employee();
 
-    var p1 = new Programer('小明', '1990-2-28');
+    var p1 = new Programer('小明', '1980/2/28');
 
     p1.setSalary(22000);
     console.log(p1.getSalary());
